@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Build outputs
+server
+desktop
+opencode-desktop
+*.exe
+*.dll
+*.so
+*.dylib
+*.app
+
+# Test artifacts
+*.test
+*.out
+coverage.out
+
+# IDE
+.idea/
+.vscode/
+
+# Local env
+.env
+.env.*
