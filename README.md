@@ -5,15 +5,13 @@
 </p>
 
 <p align="center">
-  <a href="#english">English</a> ·
-  <a href="#简体中文">简体中文</a>
+  <a href="./README.md">English</a> ·
+  <a href="./readme_zh.md">简体中文</a>
 </p>
 
 ---
 
-## English
-
-### Overview
+## Overview
 
 OpenCode CLI Proxy exposes your local `opencode` runtime through OpenAI-compatible endpoints, so tools like **Cherry Studio**, **Cursor**, **NextChat**, and OpenAI-compatible SDKs can use it without custom integrations.
 
@@ -23,7 +21,7 @@ Instead of assuming a remote OpenCode HTTP service, this project talks to the lo
 - `opencode run --format json --model ...` for completions
 - optional `--attach` support for an existing `opencode serve` instance
 
-### Features
+## Features
 
 - OpenAI-compatible endpoints
   - `GET /v1/models`
@@ -35,7 +33,7 @@ Instead of assuming a remote OpenCode HTTP service, this project talks to the lo
 - Works with local `opencode` models
 - Model alias mapping via config
 
-### Architecture
+## Architecture
 
 ```text
 OpenAI-compatible client
@@ -58,7 +56,7 @@ OpenAI-compatible client
 +---------------------------+
 ```
 
-### Requirements
+## Requirements
 
 Before using this project, make sure:
 
@@ -76,9 +74,31 @@ opencode run --model opencode-go/glm-5.1 "reply with exactly: ok"
 
 If `opencode` is not in your PATH, use an absolute path in config or in the desktop app.
 
-### Quick Start
+## Installation
 
-#### Run the server
+### Clone the repository
+
+```bash
+git clone <your-repo-url>
+cd opencode-cli-proxy
+```
+
+### Start from source
+
+```bash
+make run
+```
+
+### Build binaries
+
+```bash
+make build
+make build-desktop
+```
+
+## Quick Start
+
+### Run the server
 
 ```bash
 make run
@@ -90,7 +110,7 @@ Default address:
 http://127.0.0.1:18080
 ```
 
-#### Check service status
+### Check service status
 
 ```bash
 curl http://127.0.0.1:18080/
@@ -98,14 +118,14 @@ curl http://127.0.0.1:18080/health
 curl http://127.0.0.1:18080/v1
 ```
 
-#### List models
+### List models
 
 ```bash
 curl http://127.0.0.1:18080/v1/models \
   -H "Authorization: Bearer sk-gw-demo"
 ```
 
-#### Chat completion
+### Chat completion
 
 ```bash
 curl http://127.0.0.1:18080/v1/chat/completions \
@@ -119,7 +139,7 @@ curl http://127.0.0.1:18080/v1/chat/completions \
   }'
 ```
 
-#### Streaming chat completion
+### Streaming chat completion
 
 ```bash
 curl -N http://127.0.0.1:18080/v1/chat/completions \
@@ -134,7 +154,7 @@ curl -N http://127.0.0.1:18080/v1/chat/completions \
   }'
 ```
 
-### Use in Other Apps
+## Use in Other Apps
 
 Use the proxy as an OpenAI-compatible provider:
 
@@ -142,26 +162,26 @@ Use the proxy as an OpenAI-compatible provider:
 - **API Key**: `sk-gw-demo`
 - **Model**: `opencode-go/glm-5.1`
 
-#### Cherry Studio
+### Cherry Studio
 
 - Provider Type: `OpenAI Compatible`
 - Base URL: `http://127.0.0.1:18080/v1`
 - API Key: `sk-gw-demo`
 - Model: `opencode-go/glm-5.1`
 
-#### NextChat
+### NextChat
 
 - Custom Endpoint: `http://127.0.0.1:18080/v1`
 - API Key: `sk-gw-demo`
 - Model: `opencode-go/glm-5.1`
 
-#### Cursor / OpenAI-compatible clients
+### Cursor / OpenAI-compatible clients
 
 - OpenAI Base URL: `http://127.0.0.1:18080/v1`
 - OpenAI API Key: `sk-gw-demo`
 - Model Name: `opencode-go/glm-5.1`
 
-### Desktop App
+## Desktop App
 
 This project includes a native desktop app for macOS and Windows.
 
@@ -195,7 +215,7 @@ Desktop fields:
 - Allowed models
 - Client Base URL
 
-### Configuration
+## Configuration
 
 Example config: `configs/config.example.yaml`
 
@@ -237,7 +257,7 @@ rate_limit:
   rpm: 60
 ```
 
-#### Config notes
+### Config notes
 
 - `server`: local bind address and timeouts
 - `upstream.binary`: executable name or absolute path to `opencode`
@@ -254,7 +274,7 @@ models:
 
 Then clients can use `glm-latest` while the proxy runs `opencode-go/glm-5.1`.
 
-### Supported Routes
+## Supported Routes
 
 Public routes:
 
@@ -268,7 +288,7 @@ Authenticated routes:
 - `POST /v1/chat/completions`
 - `POST /v1/completions`
 
-### How It Works
+## How It Works
 
 For `POST /v1/chat/completions`:
 
@@ -278,7 +298,43 @@ For `POST /v1/chat/completions`:
 4. The proxy calls local `opencode`
 5. Output is parsed and converted back into OpenAI-style JSON or SSE
 
-### Limitations
+## Project Structure
+
+```text
+cmd/
+  server/          HTTP server entry
+  desktop/         Fyne desktop app
+configs/
+  config.example.yaml
+internal/
+  adapter/         OpenAI request/response mapping
+  app/             Gateway lifecycle
+  config/          Config loading and validation
+  domain/          Shared protocol types
+  openai/          HTTP handlers
+  server/          Router and middleware
+  upstream/        Local opencode CLI integration
+```
+
+## FAQ
+
+### Does this proxy call a remote OpenCode HTTP API?
+
+No. The current implementation primarily uses the local `opencode` CLI.
+
+### Can I use it with Cursor, Cherry Studio, or NextChat?
+
+Yes. Point them to the proxy's OpenAI-compatible `/v1` endpoint.
+
+### Does it support streaming?
+
+Yes. Streaming responses are exposed as SSE in an OpenAI-compatible format.
+
+### Do I need to expose my real upstream credentials to clients?
+
+No. Clients only use the gateway API key configured in this proxy.
+
+## Limitations
 
 Current MVP limitations:
 
@@ -289,7 +345,7 @@ Current MVP limitations:
 - No full audit, metrics, or production rate limiting yet
 - No Docker release flow yet
 
-### Development
+## Development
 
 ```bash
 make run
@@ -309,232 +365,17 @@ Core files:
 - `internal/adapter/chat_mapper.go`
 - `internal/server/router.go`
 
-### Roadmap
+## Roadmap
 
-- Better message and role mapping
-- Richer streaming event conversion
-- Better error mapping
-- Better model alias and default-model management
-- Request logging and audit support
-- Token usage reporting
-- Docker packaging
-- More OpenAI-compatible endpoints
+- [ ] Better message and role mapping
+- [ ] Richer streaming event conversion
+- [ ] Better error mapping
+- [ ] Better model alias and default-model management
+- [ ] Request logging and audit support
+- [ ] Token usage reporting
+- [ ] Docker packaging
+- [ ] More OpenAI-compatible endpoints
 
-### License
+## License
 
 No `LICENSE` file is included yet. Add one before public open-source release.
-
----
-
-## 简体中文
-
-### 项目简介
-
-OpenCode CLI Proxy 可以把本地 `opencode` CLI 包装成 OpenAI 兼容接口，让 **Cherry Studio**、**Cursor**、**NextChat**、OpenAI SDK 等客户端无需定制适配即可直接接入。
-
-当前实现不是去对接一个假设中的远程 OpenCode HTTP 服务，而是直接调用本机 `opencode`：
-
-- 用 `opencode models` 获取模型列表
-- 用 `opencode run --format json --model ...` 发起对话
-- 可选通过 `--attach` 连接已有的 `opencode serve`
-
-### 功能特性
-
-- OpenAI 兼容接口
-  - `GET /v1/models`
-  - `POST /v1/chat/completions`
-  - `POST /v1/completions`
-- 支持流式 SSE 输出
-- 支持网关 API Key 鉴权
-- 提供原生桌面 GUI
-- 支持模型别名映射
-- 基于本地 `opencode` 能力运行
-
-### 快速开始
-
-#### 启动服务
-
-```bash
-make run
-```
-
-默认地址：
-
-```text
-http://127.0.0.1:18080
-```
-
-#### 测试接口
-
-```bash
-curl http://127.0.0.1:18080/
-curl http://127.0.0.1:18080/health
-curl http://127.0.0.1:18080/v1
-```
-
-查看模型：
-
-```bash
-curl http://127.0.0.1:18080/v1/models \
-  -H "Authorization: Bearer sk-gw-demo"
-```
-
-聊天测试：
-
-```bash
-curl http://127.0.0.1:18080/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-gw-demo" \
-  -d '{
-    "model": "opencode-go/glm-5.1",
-    "messages": [
-      { "role": "user", "content": "你好，简单介绍一下你自己" }
-    ]
-  }'
-```
-
-流式测试：
-
-```bash
-curl -N http://127.0.0.1:18080/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-gw-demo" \
-  -d '{
-    "model": "opencode-go/glm-5.1",
-    "stream": true,
-    "messages": [
-      { "role": "user", "content": "用三句话介绍 Go 语言" }
-    ]
-  }'
-```
-
-### 在其他软件中使用
-
-按 OpenAI Compatible 方式填写：
-
-- Base URL：`http://127.0.0.1:18080/v1`
-- API Key：`sk-gw-demo`
-- Model：`opencode-go/glm-5.1`
-
-#### Cherry Studio
-
-- Provider Type：`OpenAI Compatible`
-- Base URL：`http://127.0.0.1:18080/v1`
-- API Key：`sk-gw-demo`
-- Model：`opencode-go/glm-5.1`
-
-#### NextChat
-
-- Custom Endpoint：`http://127.0.0.1:18080/v1`
-- API Key：`sk-gw-demo`
-- Model：`opencode-go/glm-5.1`
-
-#### Cursor / 通用 OpenAI 客户端
-
-- OpenAI Base URL：`http://127.0.0.1:18080/v1`
-- OpenAI API Key：`sk-gw-demo`
-- Model Name：`opencode-go/glm-5.1`
-
-### 桌面版
-
-项目提供原生桌面 GUI，适用于 macOS / Windows。
-
-启动：
-
-```bash
-make desktop
-```
-
-或：
-
-```bash
-go run -buildvcs=false ./cmd/desktop
-```
-
-构建：
-
-```bash
-make build-desktop
-```
-
-可配置项：
-
-- Config file
-- Listen host
-- Listen port
-- Opencode binary
-- Attach server
-- Gateway API key
-- Default model
-- Allowed models
-- Client Base URL
-
-### 配置示例
-
-```yaml
-server:
-  host: 0.0.0.0
-  port: 18080
-  read_timeout: 15s
-  write_timeout: 0s
-
-upstream:
-  binary: opencode
-  attach: ""
-  timeout: 120s
-
-models:
-  opencode-go/glm-5.1: opencode-go/glm-5.1
-  opencode-go/glm-5: opencode-go/glm-5
-
-accounts:
-  default:
-    auth_mode: local
-    token: ""
-
-keys:
-  sk-gw-demo:
-    account: default
-    allowed_models:
-      - opencode-go/glm-5.1
-      - opencode-go/glm-5
-```
-
-### 当前支持的接口
-
-无需鉴权：
-
-- `GET /`
-- `GET /health`
-- `GET /v1`
-
-需要鉴权：
-
-- `GET /v1/models`
-- `POST /v1/chat/completions`
-- `POST /v1/completions`
-
-### 已知限制
-
-当前版本属于 MVP：
-
-- 目前仍以 `opencode run` 的文本事件输出为核心
-- message / role 映射还比较基础
-- `/v1/models` 直接读取本地 `opencode models`
-- 还没有完整的审计、指标、生产级限流能力
-- 暂未提供 Docker 发布流程
-
-### 后续规划
-
-- 更准确的消息映射
-- 更丰富的流式事件适配
-- 更好的错误映射
-- 模型别名和默认模型管理
-- 请求日志与审计
-- Token 使用统计
-- Docker 化发布
-- 更多 OpenAI 兼容接口
-
-### License
-
-当前仓库还没有 `LICENSE` 文件。公开发布前建议补充。
