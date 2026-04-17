@@ -23,3 +23,11 @@ coverage.out
 # Local env
 .env
 .env.*
+
+# Node / npm
+node_modules/
+*.tgz
+npm-debug.log*
+
+# Release artifacts
+dist/

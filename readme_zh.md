@@ -60,6 +60,14 @@ git clone <your-repo-url>
 cd opencode-cli-proxy
 ```
 
+### 通过 npm 安装
+
+```bash
+npm install -g opencode-cli-proxy
+opencode-proxy setup
+opencode-proxy start
+```
+
 ### 直接源码运行
 
 ```bash
@@ -72,6 +80,18 @@ make run
 make build
 make build-desktop
 ```
+
+### 后台服务与自启动
+
+```bash
+opencode-proxy install-service
+opencode-proxy status
+```
+
+当前支持：
+
+- macOS LaunchAgent
+- Linux / Windows 服务化：后续补充
 
 ## 快速开始
 
@@ -352,6 +372,55 @@ make test
 - [ ] Token 使用统计
 - [ ] Docker 化发布
 - [ ] 更多 OpenAI 兼容接口
+
+## 发布
+
+为 npm 分发构建 release 二进制：
+
+```bash
+make release-dist
+```
+
+执行本地发布前检查：
+
+```bash
+npm run preflight
+```
+
+本地打 npm 包：
+
+```bash
+make npm-pack
+```
+
+构建产物会输出到 `dist/`，文件名如下：
+
+- `opencode-cli-proxy-darwin-arm64`
+- `opencode-cli-proxy-darwin-amd64`
+- `opencode-cli-proxy-linux-amd64`
+- `opencode-cli-proxy-windows-amd64.exe`
+- `checksums-v<version>.txt`
+
+### GitHub Actions 自动发布
+
+仓库已包含 `.github/workflows/release.yml`。
+
+使用方式：
+
+1. 在仓库 Secrets 中添加 `NPM_TOKEN`
+2. 提交代码
+3. 创建与 `package.json` 一致的 tag，例如 `v0.1.0`
+4. 推送该 tag
+
+工作流会自动：
+
+- 执行测试
+- 构建 `dist/*`
+- 创建 GitHub Release
+- 上传 release 产物
+- 发布 npm 包
+
+如果手动发布，也请把这些文件上传到与 `package.json` 版本一致的 GitHub Release，例如 `v0.1.0`。
 
 ## License
 

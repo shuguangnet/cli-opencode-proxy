@@ -1,4 +1,4 @@
-.PHONY: run desktop build build-desktop test
+.PHONY: run desktop build build-desktop test release-dist npm-pack
 
 run:
 	go run -buildvcs=false ./cmd/server -config configs/config.example.yaml
@@ -14,3 +14,9 @@ build-desktop:
 
 test:
 	go test ./...
+
+release-dist:
+	node ./scripts/release.js
+
+npm-pack:
+	npm pack

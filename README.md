@@ -83,6 +83,14 @@ git clone <your-repo-url>
 cd opencode-cli-proxy
 ```
 
+### Install from npm
+
+```bash
+npm install -g opencode-cli-proxy
+opencode-proxy setup
+opencode-proxy start
+```
+
 ### Start from source
 
 ```bash
@@ -95,6 +103,18 @@ make run
 make build
 make build-desktop
 ```
+
+### Background service
+
+```bash
+opencode-proxy install-service
+opencode-proxy status
+```
+
+Current support:
+
+- macOS LaunchAgent
+- Linux / Windows service helpers: planned
 
 ## Quick Start
 
@@ -375,6 +395,55 @@ Core files:
 - [ ] Token usage reporting
 - [ ] Docker packaging
 - [ ] More OpenAI-compatible endpoints
+
+## Release
+
+Build release binaries for npm distribution:
+
+```bash
+make release-dist
+```
+
+Run local release checks:
+
+```bash
+npm run preflight
+```
+
+Create the npm package tarball locally:
+
+```bash
+make npm-pack
+```
+
+Release artifacts are written to `dist/` with these filenames:
+
+- `opencode-cli-proxy-darwin-arm64`
+- `opencode-cli-proxy-darwin-amd64`
+- `opencode-cli-proxy-linux-amd64`
+- `opencode-cli-proxy-windows-amd64.exe`
+- `checksums-v<version>.txt`
+
+### Automated release with GitHub Actions
+
+The repository now includes `.github/workflows/release.yml`.
+
+To use it:
+
+1. Add an `NPM_TOKEN` repository secret
+2. Commit your changes
+3. Create a tag matching `package.json`, for example `v0.1.0`
+4. Push the tag
+
+The workflow will:
+
+- run tests
+- build `dist/*`
+- create a GitHub Release
+- upload release assets
+- publish the npm package
+
+Upload those binaries to the GitHub release whose tag matches `package.json` version when publishing manually, for example `v0.1.0`.
 
 ## License
 
